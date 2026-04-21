@@ -21,6 +21,26 @@
         console.error('VikingSettlementTycoon class not found. Did game.js load?');
         return;
       }
+
+      // Ensure a notifications container exists (game.showNotification expects #notifications)
+      if (!document.getElementById('notifications')) {
+        // If the iOS page already has iosNotifications, reuse it by creating an alias
+        const iosNot = document.getElementById('iosNotifications');
+        if (iosNot) {
+          const n = document.createElement('div');
+          n.id = 'notifications';
+          // keep it hidden (UI uses iosNotifications for visible notifications)
+          n.style.display = 'none';
+          document.body.appendChild(n);
+        } else {
+          // create a minimal hidden notifications container so showNotification won't fail
+          const n = document.createElement('div');
+          n.id = 'notifications';
+          n.style.display = 'none';
+          document.body.appendChild(n);
+        }
+      }
+
       // create instance and expose it
       try {
         const game = new VikingSettlementTycoon();
