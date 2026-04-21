@@ -2820,13 +2820,51 @@ class VikingSettlementTycoon {
         const notification = document.createElement('div');
         notification.className = `notification ${type}`;
         notification.textContent = message;
-        
-        document.getElementById('notifications').appendChild(notification);
-        
+
+        // Prefer visible app containers, but ensure a valid DOM parent exists.
+        let container = document.getElementById('notifications') || document.getElementById('iosNotifications');
+
+        if (!container) {
+            // Create a hidden notifications container and append it to a safe root (body preferred, fallback to documentElement).
+            try {
+                container = document.createElement('div');
+                container.id = 'notifications';
+                container.style.display = 'none';
+                const root = document.body || document.documentElement;
+                if (!root) {
+                    // If no root is available, append notification directly to documentElement if possible
+                    (document.documentElement || document).appendChild(notification);
+                    setTimeout(() => { try { notification.remove(); } catch {} }, 3000);
+                    // play sound and exit early
+                    if (type === 'success') this.playSound('notification_good', 0.7);
+                    else if (type === 'error' || type === 'warning') this.playSound('notification_bad', 0.7);
+                    else this.playSound('ui_click', 0.5);
+                    return;
+                }
+                root.appendChild(container);
+            } catch (e) {
+                // Very defensive fallback: attach notification directly and exit
+                try { (document.documentElement || document).appendChild(notification); } catch {}
+                setTimeout(() => { try { notification.remove(); } catch {} }, 3000);
+                if (type === 'success') this.playSound('notification_good', 0.7);
+                else if (type === 'error' || type === 'warning') this.playSound('notification_bad', 0.7);
+                else this.playSound('ui_click', 0.5);
+                return;
+            }
+        }
+
+        // At this point container is guaranteed to be a DOM node
+        try {
+            container.appendChild(notification);
+        } catch (e) {
+            // If append fails for any odd reason, fallback to appending notification to a safe root
+            try { (document.body || document.documentElement).appendChild(notification); } catch {}
+        }
+
         setTimeout(() => {
-            notification.remove();
+            try { notification.remove(); } catch {}
         }, 3000);
-        
+
         // Play appropriate notification sound
         if (type === 'success') {
             this.playSound('notification_good', 0.7);
