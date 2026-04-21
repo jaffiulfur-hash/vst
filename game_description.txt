@@ -1,0 +1,48 @@
+Viking Settlement Tycoon — Game Overview
+
+Lead your clan from a humble camp to a thriving Norse settlement. Explore an infinite, procedurally generated world of fjords, forests, tundra, and mountains; gather resources; construct iconic buildings; and grow your people into a legendary community worthy of the sagas.
+
+Core Features
+- Infinite World: Seamlessly generated biomes (coastal fjords, boreal forests, arctic tundra, temperate plains, highlands) with unique terrain and visuals.
+- Settlement Building: Place and upgrade Longhouses, Farms, Lumber Mills, Blacksmiths, Trading Posts, and Temples—each affecting resources and stats.
+- Resource Economy: Manage food, wood, iron, and gold with clear per-second production feedback.
+- Scouts & Exploration: Dispatch scouts to unveil the map, pierce the fog of war, and find strategic build locations.
+- Day/Night Cycle & Weather: Dynamic lighting, sun rays, and atmospheric events like distant thunder and lightning.
+- Clean, Minimal UI: Functional layout with clear stats (Happiness, Defense, Prosperity) and intuitive build panel.
+- Sound & Ambience: Satisfying UI clicks, build effects, resource chimes, ambient forests and oceans, and a triumphant Viking horn.
+
+Platforms
+- PC/Desktop: Full experience with mouse/keyboard support and optional Steam Cloud sync (Electron + steamworks.js when available).
+- Mobile (Android): Optimized touch controls, pinch-to-zoom, double tap to zoom, long press to send scouts, and a portrait splash screen.
+
+Performance
+- Frame Pacing: 30 FPS VSync lock for stable performance across a wide range of hardware.
+- Smart Loading: Chunks stream in/out around the camera for smooth exploration.
+- Lightweight Assets: Efficient rendering and caching for sprites and terrain.
+
+Controls (PC)
+- WASD: Move camera
+- Mouse Drag: Pan
+- Mouse Wheel: Zoom
+- Right-Click: Send scout to target
+- E: Export save to TXT (Base64-encoded)
+- I: Import save from TXT
+- N: New territory (reset seed, fresh start)
+- P: Photo mode (screenshot)
+- ESC: Cancel building placement
+
+Saving & Cloud
+- Local Saves: Automatic and manual saves stored in localStorage.
+- Export/Import: Base64 UTF-8 TXT export for backups and sharing.
+- Steam Cloud: If running under Electron with steamworks.js, cloud sync is supported (safe no-op in browser).
+
+Buildings (Examples)
+- Longhouse: +Population growth; core housing for your clan.
+- Farm: Sustains food production for long-term growth.
+- Lumber Mill: Produces wood to unlock higher-tier structures.
+- Blacksmith: Increases iron production and boosts Defense.
+- Trading Post: Generates gold and enhances Prosperity.
+- Temple: Improves Happiness and cultural prestige.
+
+Goal
+Balance growth, resources, and wellbeing while exploring and mastering harsh northern lands. Let your settlement prosper through smart planning and bold exploration—your saga awaits.
