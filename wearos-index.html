@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Viking Settlement Tycoon - Wear OS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="wearos-styles.css">
+</head>
+<body>
+    <div id="wearContainer">
+        <div id="watchMask"></div>
+        <canvas id="gameCanvas"></canvas>
+
+        <div id="hudTop">
+            <span id="wearPhase">day</span>
+            <span id="wearClock">12:00</span>
+            <span id="wearPop"> 5</span>
+        </div>
+
+        <div id="hudBottom">
+            <button class="wear-btn" id="btnBuild">Build</button>
+            <button class="wear-btn" id="btnScout">Scout</button>
+            <button class="wear-btn" id="btnSave">Save</button>
+            <button class="wear-btn" id="btnSettings"><img src="gear_icon.png" alt="Settings" class="gear"></button>
+        </div>
+
+        <div id="buildTray" class="tray">
+            <button class="wear-pill" data-building="longhouse">Longhouse</button>
+            <button class="wear-pill" data-building="farm">Farm</button>
+            <button class="wear-pill" data-building="lumbermill">Mill</button>
+            <button class="wear-pill" data-building="blacksmith">Smith</button>
+            <button class="wear-pill" data-building="tradingpost">Trade</button>
+            <button class="wear-pill" data-building="temple">Temple</button>
+        </div>
+
+        <div id="notifications"></div>
+
+        <div id="settingsModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Settings</h3>
+                    <button id="closeSettingsBtn" class="modal-close" aria-label="Close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="modal-row">
+                        <button id="settingsExportBtn" class="action-btn"><img src="save_icon.png" class="btn-icon"> Export Save</button>
+                        <button id="settingsImportBtn" class="action-btn"><img src="save_icon.png" class="btn-icon"> Import Save</button>
+                        <button id="settingsPairBtn" class="action-btn"><img src="gear_icon.png" class="btn-icon"> Pair Phone</button>
+                        <button id="settingsTransferBtn" class="action-btn"><img src="save_icon.png" class="btn-icon"> Transfer from Phone</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="importmap">
+    {
+        "imports": {
+            "nipplejs": "https://esm.sh/nipplejs"
+        }
+    }
+    </script>
+    <script src="save-guard.js"></script>
+    <script src="vsync.js"></script>
+    <script src="bugfix-helper.js"></script>
+    <script src="wearos.js"></script>
+    <script src="wearos-pairing.js"></script>
+    <script>
+    window.addEventListener('load', () => {
+        // Ensure game instance exists on Wear OS
+        if (!window.wearGame) { window.wearGame = new WearVikingSettlementTycoon(); }
+        // Initialize pairing helper
+        WearPairing.init(window.wearGame);
+    });
+    </script>
+</body>
+</html>

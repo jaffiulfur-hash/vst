@@ -3,20 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Viking Settlement Tycoon</title>
+    <title>Viking Settlement Tycoon - PC</title>
     <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="pc-styles.css">
 </head>
 <body>
-    <!-- Add splash screen -->
-    <div id="splashScreen" class="splash-screen">
-        <div class="splash-frame">
-            <img src="lv_0_20250825133440.gif" alt="Viking Settlement Tycoon Loading" class="splash-gif">
-            <canvas id="splashFlames"></canvas>
-        </div>
-    </div>
-
-    <div id="gameContainer" style="display: none;">
+    <div id="gameContainer">
         <!-- Top UI Bar -->
         <div id="topUI">
             <div class="ui-section">
@@ -134,6 +126,11 @@
                     <button id="generateMapBtn" class="action-btn"><img src="map_icon.png" class="btn-icon"> New Territory</button>
                     <button id="saveGameBtn" class="action-btn"><img src="save_icon.png" class="btn-icon"> Save</button>
                 </div>
+            </div>
+            
+            <div id="timeDisplay" class="time-display">
+                <div class="time-phase" id="timePhase">day</div>
+                <div class="time-clock" id="timeClock">12:00</div>
             </div>
         </div>
 

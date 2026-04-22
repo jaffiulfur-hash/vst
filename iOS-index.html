@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Viking Tycoon">
+    <link rel="apple-touch-icon" href="app_icon.png">
+    <title>Viking Settlement Tycoon - iOS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="iOS-styles.css">
+    <script>
+        // Force portrait orientation
+        if (screen.orientation && screen.orientation.lock) {
+            screen.orientation.lock('portrait').catch(() => {});
+        }
+        
+        // iOS-specific zoom prevention
+        document.addEventListener('touchstart', function(e) {
+            if (e.touches.length > 1) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+        
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function(event) {
+            const now = (new Date()).getTime();
+            if (now - lastTouchEnd <= 300) {
+                event.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
+        
+        // iOS viewport height fix
+        const setVH = () => {
+            let vh = window.innerHeight * 0.01;
+            document.documentElement.style.setProperty('--vh', `${vh}px`);
+        };
+        window.addEventListener('resize', setVH);
+        window.addEventListener('orientationchange', setVH);
+        setVH();
+    </script>
+</head>
+<body>
+    <!-- Animated Splashscreen -->
+    <div id="splashScreen" class="splash-screen">
+        <img src="lv_0_20250825133440.gif" alt="Viking Settlement Tycoon Loading" class="splash-gif">
+    </div>
+
+    <div id="gameContainer" style="display: none;">
+        <!-- iOS Top Status Bar -->
+        <div id="iosTopBar">
+            <div class="status-section">
+                <h1 class="ios-title">Viking Tycoon</h1>
+                <span class="jarl-info" id="iosKingNameDisplay" style="margin-left:8px;"></span>
+                <button id="iosSettingsBtn" class="icon-btn" style="margin-left:8px;"><img src="gear_icon.png" alt="Settings" class="icon-gear"></button>
+                <div class="ios-time-display"><span id="iosTime">day 12:00</span></div>
+                <div class="ios-population">
+                    <img class="ios-icon" src="population_icon.png" alt="Population">
+                    <span id="iosPop">5</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- iOS Resources Panel -->
+        <div id="iosResourcesPanel">
+            <div class="ios-resource">
+                <img class="ios-resource-icon" src="food_icon.png" alt="Food">
+                <div class="ios-resource-info">
+                    <span id="iosFood">100</span>
+                    <span class="ios-rate">(0/s)</span>
+                </div>
+            </div>
+            <div class="ios-resource">
+                <img class="ios-resource-icon" src="wood_icon.png" alt="Wood">
+                <div class="ios-resource-info">
+                    <span id="iosWood">50</span>
+                    <span class="ios-rate">(0/s)</span>
+                </div>
+            </div>
+            <div class="ios-resource">
+                <img class="ios-resource-icon" src="iron_icon.png" alt="Iron">
+                <div class="ios-resource-info">
+                    <span id="iosIron">25</span>
+                    <span class="ios-rate">(0/s)</span>
+                </div>
+            </div>
+            <div class="ios-resource">
+                <img class="ios-resource-icon" src="gold_icon.png" alt="Gold">
+                <div class="ios-resource-info">
+                    <span id="iosGold">10</span>
+                    <span class="ios-rate">(0/s)</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- iOS Game Canvas -->
+        <div id="iosGameArea">
+            <canvas id="gameCanvas"></canvas>
+            
+            <!-- iOS Touch Controls Overlay -->
+            <div id="touchControlsOverlay">
+                <div class="touch-hint">Drag to explore • Long press to scout • Pinch to zoom • Double tap to zoom</div>
+            </div>
+        </div>
+
+        <!-- iOS Bottom Panel -->
+        <div id="iosBottomPanel">
+            <!-- Tab Navigation -->
+            <div id="iosTabNav">
+                <button class="ios-tab active" data-tab="buildings"><img src="build_icon.png" class="tab-icon"> Build</button>
+                <button class="ios-tab" data-tab="stats"><img src="stats_icon.png" class="tab-icon"> Stats</button>
+                <button class="ios-tab" data-tab="actions"><img src="actions_icon.png" class="tab-icon"> Actions</button>
+            </div>
+
+            <!-- Buildings Tab -->
+            <div id="iosBuildingsTab" class="ios-tab-content active">
+                <div class="ios-building-grid">
+                    <div class="ios-building-card" data-building="longhouse">
+                        <img class="ios-building-icon" src="longhouse_icon.png" alt="Longhouse">
+                        <div class="ios-building-name">Longhouse</div>
+                        <div class="ios-building-cost"><img src="wood_icon.png" class="cost-icon-small">20 <img src="food_icon.png" class="cost-icon-small">10</div>
+                    </div>
+                    <div class="ios-building-card" data-building="farm">
+                        <img class="ios-building-icon" src="farm_icon.png" alt="Farm">
+                        <div class="ios-building-name">Farm</div>
+                        <div class="ios-building-cost"><img src="wood_icon.png" class="cost-icon-small">15</div>
+                    </div>
+                    <div class="ios-building-card" data-building="lumbermill">
+                        <img class="ios-building-icon" src="lumbermill_icon.png" alt="Mill">
+                        <div class="ios-building-name">Mill</div>
+                        <div class="ios-building-cost"><img src="wood_icon.png" class="cost-icon-small">25 <img src="iron_icon.png" class="cost-icon-small">5</div>
+                    </div>
+                    <div class="ios-building-card" data-building="blacksmith">
+                        <img class="ios-building-icon" src="blacksmith_icon.png" alt="Smith">
+                        <div class="ios-building-name">Smith</div>
+                        <div class="ios-building-cost"><img src="wood_icon.png" class="cost-icon-small">30 <img src="iron_icon.png" class="cost-icon-small">10</div>
+                    </div>
+                    <div class="ios-building-card" data-building="tradingpost">
+                        <img class="ios-building-icon" src="tradingpost_icon.png" alt="Trade">
+                        <div class="ios-building-name">Trade</div>
+                        <div class="ios-building-cost"><img src="wood_icon.png" class="cost-icon-small">40 <img src="gold_icon.png" class="cost-icon-small">5</div>
+                    </div>
+                    <div class="ios-building-card" data-building="temple">
+                        <img class="ios-building-icon" src="temple_icon.png" alt="Temple">
+                        <div class="ios-building-name">Temple</div>
+                        <div class="ios-building-cost"><img src="wood_icon.png" class="cost-icon-small">50 <img src="iron_icon.png" class="cost-icon-small">20</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Tab -->
+            <div id="iosStatsTab" class="ios-tab-content">
+                <div class="ios-stats-grid">
+                    <div class="ios-stat-item">
+                        <span class="ios-stat-label">😊 Happiness</span>
+                        <div class="ios-stat-bar">
+                            <div class="ios-stat-fill" id="iosHappinessBar" style="width: 75%"></div>
+                        </div>
+                    </div>
+                    <div class="ios-stat-item">
+                        <span class="ios-stat-label">🛡️ Defense</span>
+                        <div class="ios-stat-bar">
+                            <div class="ios-stat-fill" id="iosDefenseBar" style="width: 40%"></div>
+                        </div>
+                    </div>
+                    <div class="ios-stat-item">
+                        <span class="ios-stat-label">💰 Prosperity</span>
+                        <div class="ios-stat-bar">
+                            <div class="ios-stat-fill" id="iosProsperityBar" style="width: 60%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions Tab -->
+            <div id="iosActionsTab" class="ios-tab-content">
+                <div class="ios-actions-grid">
+                    <button id="iosNewTerritoryBtn" class="ios-action-btn">
+                        <img src="map_icon.png" class="ios-btn-icon"> New Territory
+                    </button>
+                    <button id="iosSaveBtn" class="ios-action-btn">
+                        <img src="save_icon.png" class="ios-btn-icon"> Save Game
+                    </button>
+                    <button id="iosInfoBtn" class="ios-action-btn">
+                        <img src="info_icon.png" class="ios-btn-icon"> Device Info
+                    </button>
+                    <button id="iosHelpBtn" class="ios-action-btn">
+                        <img src="help_icon.png" class="ios-btn-icon"> Help
+                    </button>
+                    <button id="iosPhotoBtn" class="ios-action-btn">
+                        <img src="actions_icon.png" class="ios-btn-icon"> Photo Mode
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- iOS Notifications -->
+        <div id="iosNotifications"></div>
+
+        <!-- iOS Device Info Modal -->
+        <div id="iosDeviceModal" class="ios-modal">
+            <div class="ios-modal-content">
+                <div class="ios-modal-header">
+                    <h3>Device Information</h3>
+                    <button class="ios-modal-close">&times;</button>
+                </div>
+                <div class="ios-modal-body">
+                    <div class="device-info-item">
+                        <span class="device-label">App Version:</span>
+                        <span id="gameVersion">1.0.0</span>
+                    </div>
+                    <div class="device-info-item">
+                        <span class="device-label">Screen Size:</span>
+                        <span id="screenSize">-</span>
+                    </div>
+                    <div class="device-info-item">
+                        <span class="device-label">Platform:</span>
+                        <span id="platformInfo">-</span>
+                    </div>
+                    <div class="device-info-item">
+                        <span class="device-label">Browser:</span>
+                        <span id="browserInfo">-</span>
+                    </div>
+                    <div class="device-info-item">
+                        <span class="device-label">Device Model:</span>
+                        <span id="deviceModel">-</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- iOS Help Modal -->
+        <div id="iosHelpModal" class="ios-modal">
+            <div class="ios-modal-content">
+                <div class="ios-modal-header">
+                    <h3>How to Play</h3>
+                    <button class="ios-modal-close">&times;</button>
+                </div>
+                <div class="ios-modal-body">
+                    <div class="help-section">
+                        <h4>🏗️ Building</h4>
+                        <p>Tap Build tab, select a building, then tap the map to place it.</p>
+                    </div>
+                    <div class="help-section">
+                        <h4>🗺️ Exploration</h4>
+                        <p>Long press on the map to send scouts to explore new areas.</p>
+                    </div>
+                    <div class="help-section">
+                        <h4>📊 Management</h4>
+                        <p>Check Stats tab to monitor your settlement's progress.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- iOS Settings Modal -->
+        <div id="iosSettingsModal" class="ios-modal">
+            <div class="ios-modal-content">
+                <div class="ios-modal-header">
+                    <h3>Settings</h3>
+                    <button class="ios-modal-close">&times;</button>
+                </div>
+                <div class="ios-modal-body">
+                    <div class="ios-actions-grid">
+                        <button id="iosExportSaveBtn" class="ios-action-btn"><img src="save_icon.png" class="ios-btn-icon"> Export Save</button>
+                        <button id="iosImportSaveBtn" class="ios-action-btn"><img src="save_icon.png" class="ios-btn-icon"> Import Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="importmap">
+    {
+        "imports": {
+            "nipplejs": "https://esm.sh/nipplejs"
+        }
+    }
+    </script>
+    <script src="save-guard.js"></script>
+    <script src="vsync.js"></script>
+    <script src="bugfix-helper.js"></script>
+    <script src="game.js"></script>
+    <script src="iOS-game.js"></script>
+</body>
+</html>

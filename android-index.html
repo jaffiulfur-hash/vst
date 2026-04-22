@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, orientation=portrait, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Viking Tycoon">
+    <link rel="apple-touch-icon" href="app_icon.png">
+    <title>Viking Settlement Tycoon - Mobile</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="android-styles.css">
+    <script>
+        // Force portrait orientation
+        if (screen.orientation && screen.orientation.lock) {
+            screen.orientation.lock('portrait').catch(() => {});
+        }
+        
+        // Prevent zoom on double tap
+        document.addEventListener('touchstart', function(e) {
+            if (e.touches.length > 1) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+        
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function(event) {
+            const now = (new Date()).getTime();
+            if (now - lastTouchEnd <= 300) {
+                event.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
+    </script>
+</head>
+<body>
+    <!-- Animated Splashscreen -->
+    <div id="splashScreen" class="splash-screen">
+        <img src="lv_0_20250825133440.gif" alt="Viking Settlement Tycoon Loading" class="splash-gif">
+    </div>
+
+    <div id="gameContainer" style="display: none;">
+        <!-- Mobile Top Status Bar -->
+        <div id="mobileTopBar">
+            <div class="status-section">
+                <h1 class="mobile-title">Viking Tycoon</h1>
+                <span class="jarl-info" id="mobileKingNameDisplay" style="margin-left:8px;"></span>
+                <button id="mobileSettingsBtn" class="icon-btn" style="margin-left:8px;"><img src="gear_icon.png" alt="Settings" class="icon-gear"></button>
+                <div class="mobile-time-display"><span id="mobileTime">day 12:00</span></div>
+                <div class="mobile-population">
+                    <img class="mobile-icon" src="population_icon.png" alt="Population">
+                    <span id="mobilePop">5</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Resources Panel -->
+        <div id="mobileResourcesPanel">
+            <div class="mobile-resource">
+                <img class="mobile-resource-icon" src="food_icon.png" alt="Food">
+                <div class="mobile-resource-info">
+                    <span id="mobileFood">100</span>
+                    <span class="mobile-rate">(0/s)</span>
+                </div>
+            </div>
+            <div class="mobile-resource">
+                <img class="mobile-resource-icon" src="wood_icon.png" alt="Wood">
+                <div class="mobile-resource-info">
+                    <span id="mobileWood">50</span>
+                    <span class="mobile-rate">(0/s)</span>
+                </div>
+            </div>
+            <div class="mobile-resource">
+                <img class="mobile-resource-icon" src="iron_icon.png" alt="Iron">
+                <div class="mobile-resource-info">
+                    <span id="mobileIron">25</span>
+                    <span class="mobile-rate">(0/s)</span>
+                </div>
+            </div>
+            <div class="mobile-resource">
+                <img class="mobile-resource-icon" src="gold_icon.png" alt="Gold">
+                <div class="mobile-resource-info">
+                    <span id="mobileGold">10</span>
+                    <span class="mobile-rate">(0/s)</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Game Canvas -->
+        <div id="mobileGameArea">
+            <canvas id="gameCanvas"></canvas>
+            
+            <!-- Mobile Touch Controls Overlay -->
+            <div id="touchControlsOverlay">
+                <div class="touch-hint">Drag to explore • Long press to scout • Pinch to zoom • Double tap to zoom</div>
+            </div>
+        </div>
+
+        <!-- Mobile Bottom Panel -->
+        <div id="mobileBottomPanel">
+            <!-- Tab Navigation -->
+            <div id="mobileTabNav">
+                <button class="mobile-tab active" data-tab="buildings"><img src="build_icon.png" class="tab-icon"> Build</button>
+                <button class="mobile-tab" data-tab="stats"><img src="stats_icon.png" class="tab-icon"> Stats</button>
+                <button class="mobile-tab" data-tab="actions"><img src="actions_icon.png" class="tab-icon"> Actions</button>
+            </div>
+
+            <!-- Buildings Tab -->
+            <div id="mobileBuildingsTab" class="mobile-tab-content active">
+                <div class="mobile-building-grid">
+                    <div class="mobile-building-card" data-building="longhouse">
+                        <img class="mobile-building-icon" src="longhouse_icon.png" alt="Longhouse">
+                        <div class="mobile-building-name">Longhouse</div>
+                        <div class="mobile-building-cost"><img src="wood_icon.png" class="cost-icon-small">20 <img src="food_icon.png" class="cost-icon-small">10</div>
+                    </div>
+                    <div class="mobile-building-card" data-building="farm">
+                        <img class="mobile-building-icon" src="farm_icon.png" alt="Farm">
+                        <div class="mobile-building-name">Farm</div>
+                        <div class="mobile-building-cost"><img src="wood_icon.png" class="cost-icon-small">15</div>
+                    </div>
+                    <div class="mobile-building-card" data-building="lumbermill">
+                        <img class="mobile-building-icon" src="lumbermill_icon.png" alt="Mill">
+                        <div class="mobile-building-name">Mill</div>
+                        <div class="mobile-building-cost"><img src="wood_icon.png" class="cost-icon-small">25 <img src="iron_icon.png" class="cost-icon-small">5</div>
+                    </div>
+                    <div class="mobile-building-card" data-building="blacksmith">
+                        <img class="mobile-building-icon" src="blacksmith_icon.png" alt="Smith">
+                        <div class="mobile-building-name">Smith</div>
+                        <div class="mobile-building-cost"><img src="wood_icon.png" class="cost-icon-small">30 <img src="iron_icon.png" class="cost-icon-small">10</div>
+                    </div>
+                    <div class="mobile-building-card" data-building="tradingpost">
+                        <img class="mobile-building-icon" src="tradingpost_icon.png" alt="Trade">
+                        <div class="mobile-building-name">Trade</div>
+                        <div class="mobile-building-cost"><img src="wood_icon.png" class="cost-icon-small">40 <img src="gold_icon.png" class="cost-icon-small">5</div>
+                    </div>
+                    <div class="mobile-building-card" data-building="temple">
+                        <img class="mobile-building-icon" src="temple_icon.png" alt="Temple">
+                        <div class="mobile-building-name">Temple</div>
+                        <div class="mobile-building-cost"><img src="wood_icon.png" class="cost-icon-small">50 <img src="iron_icon.png" class="cost-icon-small">20</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Tab -->
+            <div id="mobileStatsTab" class="mobile-tab-content">
+                <div class="mobile-stats-grid">
+                    <div class="mobile-stat-item">
+                        <span class="mobile-stat-label">😊 Happiness</span>
+                        <div class="mobile-stat-bar">
+                            <div class="mobile-stat-fill" id="mobileHappinessBar" style="width: 75%"></div>
+                        </div>
+                    </div>
+                    <div class="mobile-stat-item">
+                        <span class="mobile-stat-label">🛡️ Defense</span>
+                        <div class="mobile-stat-bar">
+                            <div class="mobile-stat-fill" id="mobileDefenseBar" style="width: 40%"></div>
+                        </div>
+                    </div>
+                    <div class="mobile-stat-item">
+                        <span class="mobile-stat-label">💰 Prosperity</span>
+                        <div class="mobile-stat-bar">
+                            <div class="mobile-stat-fill" id="mobileProsperityBar" style="width: 60%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions Tab -->
+            <div id="mobileActionsTab" class="mobile-tab-content">
+                <div class="mobile-actions-grid">
+                    <button id="mobileNewTerritoryBtn" class="mobile-action-btn">
+                        <img src="map_icon.png" class="mobile-btn-icon"> New Territory
+                    </button>
+                    <button id="mobileSaveBtn" class="mobile-action-btn">
+                        <img src="save_icon.png" class="mobile-btn-icon"> Save Game
+                    </button>
+                    <button id="mobileInfoBtn" class="mobile-action-btn">
+                        <img src="info_icon.png" class="mobile-btn-icon"> Device Info
+                    </button>
+                    <button id="mobileHelpBtn" class="mobile-action-btn">
+                        <img src="help_icon.png" class="mobile-btn-icon"> Help
+                    </button>
+                    <button id="mobilePhotoBtn" class="mobile-action-btn">
+                        <img src="actions_icon.png" class="mobile-btn-icon"> Photo Mode
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Notifications -->
+        <div id="mobileNotifications"></div>
+
+        <!-- Mobile Device Info Modal -->
+        <div id="mobileDeviceModal" class="mobile-modal">
+            <div class="mobile-modal-content">
+                <div class="mobile-modal-header">
+                    <h3>Device Information</h3>
+                    <button class="mobile-modal-close">&times;</button>
+                </div>
+                <div class="mobile-modal-body">
+                    <div class="device-info-item">
+                        <span class="device-label">App Version:</span>
+                        <span id="gameVersion">1.0.0</span>
+                    </div>
+                    <div class="device-info-item">
+                        <span class="device-label">Screen Size:</span>
+                        <span id="screenSize">-</span>
+                    </div>
+                    <div class="device-info-item">
+                        <span class="device-label">Platform:</span>
+                        <span id="platformInfo">-</span>
+                    </div>
+                    <div class="device-info-item">
+                        <span class="device-label">Browser:</span>
+                        <span id="browserInfo">-</span>
+                    </div>
+                    <div class="device-info-item">
+                        <span class="device-label">Device Model:</span>
+                        <span id="deviceModel">-</span>
+                    </div>
+                    <div class="device-info-item">
+                        <span class="device-label">Manufacturer:</span>
+                        <span id="deviceManufacturer">-</span>
+                    </div>
+                    <div class="device-info-item">
+                        <span class="device-label">Cordova Version:</span>
+                        <span id="cordovaVersion">-</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Help Modal -->
+        <div id="mobileHelpModal" class="mobile-modal">
+            <div class="mobile-modal-content">
+                <div class="mobile-modal-header">
+                    <h3>How to Play</h3>
+                    <button class="mobile-modal-close">&times;</button>
+                </div>
+                <div class="mobile-modal-body">
+                    <div class="help-section">
+                        <h4>🏗️ Building</h4>
+                        <p>Tap Build tab, select a building, then tap the map to place it.</p>
+                    </div>
+                    <div class="help-section">
+                        <h4>🗺️ Exploration</h4>
+                        <p>Long press on the map to send scouts to explore new areas.</p>
+                    </div>
+                    <div class="help-section">
+                        <h4>📊 Management</h4>
+                        <p>Check Stats tab to monitor your settlement's progress.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Settings Modal -->
+        <div id="mobileSettingsModal" class="mobile-modal">
+            <div class="mobile-modal-content">
+                <div class="mobile-modal-header">
+                    <h3>Settings</h3>
+                    <button class="mobile-modal-close">&times;</button>
+                </div>
+                <div class="mobile-modal-body">
+                    <div class="mobile-actions-grid">
+                        <button id="mobileExportSaveBtn" class="mobile-action-btn"><img src="save_icon.png" class="mobile-btn-icon"> Export Save</button>
+                        <button id="mobileImportSaveBtn" class="mobile-action-btn"><img src="save_icon.png" class="mobile-btn-icon"> Import Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="importmap">
+    {
+        "imports": {
+            "nipplejs": "https://esm.sh/nipplejs"
+        }
+    }
+    </script>
+    <script src="save-guard.js"></script>
+    <script src="vsync.js"></script>
+    <script src="bugfix-helper.js"></script>
+    <script src="android.js"></script>
+</body>
+</html>

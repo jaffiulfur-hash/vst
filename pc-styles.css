@@ -1,0 +1,89 @@
+@import url('styles.css');
+
+/* Add custom PC-specific styles below */
+
+/* Custom font sizes for better readability on PC */
+.game-title {
+    font-size: 2rem;
+}
+
+.resource-value {
+    font-size: 1.2rem;
+}
+
+.resource-rate {
+    font-size: 1rem;
+}
+
+.population {
+    font-size: 1.5rem;
+}
+
+/* Enhanced building card design for PC */
+.building-card {
+    min-width: 120px;
+    padding: 15px 10px;
+}
+
+.building-icon {
+    width: 30px;
+    height: 30px;
+}
+
+.building-name {
+    font-size: 1.2rem;
+}
+
+.building-cost {
+    font-size: 1rem;
+}
+
+/* Custom stats display for PC */
+.stat-label {
+    font-size: 1.2rem;
+}
+
+.stat-bar {
+    height: 10px;
+}
+
+.stat-fill {
+    height: 100%;
+    transition: width 0.5s ease;
+}
+
+/* Custom notification styles for PC */
+.notification {
+    min-width: 250px;
+    padding: 20px 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.7);
+}
+
+/* Custom time display for PC */
+.time-display {
+    position: absolute;
+    top: 40px;
+    right: 280px;
+    background: rgba(44, 24, 16, 0.9);
+    border: 2px solid #8b4513;
+    border-radius: 10px;
+    padding: 15px 20px;
+    color: #f0f0f0;
+    font-size: 1.2rem;
+    font-weight: 700;
+    text-align: center;
+    backdrop-filter: blur(5px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+}
+
+.time-phase {
+    color: #d4af37;
+    font-size: 1.1rem;
+    margin-bottom: 5px;
+}
+
+.time-clock {
+    font-family: 'Space Mono', monospace;
+    font-size: 1.5rem;
+}
